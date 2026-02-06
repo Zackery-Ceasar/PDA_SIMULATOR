@@ -3,7 +3,7 @@ import PDA.PDA_Sim;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class Main {
+public class ceasar_p1 {
     public static void main(String[] args) throws FileNotFoundException {
 
         // Can only take in one file
