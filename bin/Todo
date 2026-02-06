@@ -1,0 +1,66 @@
+    Main will be in charge of reading in the file from argument and passing to
+    PDA_SIM will be in charge of overhead class handling and functionality, it will pass
+    the file to a States class which will read in the states and a Transition class which will
+    read and store our transitions
+    First step is reading in from input file
+    There are two types of input files, state and transition
+
+    PDA_Sim will contain:
+        load()
+        simulate()
+        output_results()
+
+    State lines come in as:
+        state x start
+        state x accept
+        state x accept  start
+        state x start accept
+
+        x can be any number between 0 and 1000
+
+    Transition lines come in as:
+        transition p x y q z
+
+        p - Current state
+        x - What we are reading
+        y - What we are popping
+        q - Next state
+        z - What we are pushing
+
+        We begin at start state and check what configurations we
+        can move to by comparing current configuration and possible transitions. If
+        the following is true we add the configurations:
+
+        1.
+        Current input symbol in config = read symbol of transition
+        AND
+        Whats on top of the stack in config = pop symbol of transition
+
+        2.
+        read symbol of transition = Epsilon (Empty state)
+        AND
+        Whats on top of the stack in config = pop symbol of transition
+
+        3.
+        Current input symbol in config = read symbol of transition
+        AND
+        pop symbol of transition = Epsilon (Empty state)
+
+        4.
+        read symbol of transition = Epsilon (Empty state)
+        AND
+        pop symbol of transition = Epsilon (Empty state)
+
+
+        Whats required:
+            - Some sort of Data Structure to hold the configurations and transitions
+                We can have a configurations class and transitions class and then maintain them
+                inside our PDA_SIM file
+            - Some sort of Data Structure to map each configuration to each possible transition
+            - A way to check to see if a configuration has been created already, to avoid infite loops
+            - We should also maintain lists of which configurations are accepted vs. rejected
+                - If none of the terminal configurations have an accept state or there are no terminal
+                    configurations we reject.
+                - If there exists a terminal configuration which is an accept state, we accept.
+
+            Once the configurations are generated, we check to see if any are terminal congurations with accept states.

@@ -27,6 +27,18 @@ class State {
 
     }
 
+    boolean isStart() {
+        return this.start;
+    }
+
+    boolean isAccept() {
+        return this.accept;
+    }
+
+    int getId() {
+        return this.state_id;
+    }
+
 }
 
 public class States {
@@ -41,8 +53,26 @@ public class States {
     public void process_file() {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            String[] parts = line.split(" ");
-            System.out.println(parts);
+            String[] parts = line.split("\\s+");
+
+            // System.out.println(parts[0]);
+            if (parts[0].equals("state")) {
+                State s;
+                if (parts.length == 2) {
+                    s = new State(false, false, Integer.parseInt(parts[1]));
+                } else if (parts.length == 3) {
+                    if (parts[2] == "accept") {
+                        s = new State(false, true, Integer.parseInt(parts[1]));
+                    } else {
+                        s = new State(true, false, Integer.parseInt(parts[1]));
+                    }
+                } else {
+                    s = new State(true, false, Integer.parseInt(parts[1]));
+                }
+                state_collection.putIfAbsent(Integer.parseInt(parts[1]), s);
+                System.out.println(s.getId());
+            }
+
         }
     }
 
