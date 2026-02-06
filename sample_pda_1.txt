@@ -1,0 +1,9 @@
+state	0	start
+state	1
+state	2
+state	3	accept
+transition	1	0	E	1	0
+transition	2	1	0	2	E
+transition	1	E	E	2	E
+transition	2	E	$	3	E
+transition	0	E	E	1	$
