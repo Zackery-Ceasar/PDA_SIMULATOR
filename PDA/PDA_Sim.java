@@ -16,7 +16,7 @@ public class PDA_Sim {
     public PDA_Sim(File input) throws FileNotFoundException {
         this.input = input;
         state_handler = new States(input);
-        trans_handler = new Transitions();
+        trans_handler = new Transitions(input);
         config_handler = new Configurations();
 
     }
@@ -24,6 +24,7 @@ public class PDA_Sim {
     // This takes input file and gives it to States and Transitions to store info
     public void load() {
         state_handler.process_file();
+        trans_handler.process_file();
     }
 
     // This generates all of the possible configurations

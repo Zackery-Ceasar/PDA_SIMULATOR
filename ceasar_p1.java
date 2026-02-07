@@ -7,8 +7,8 @@ public class ceasar_p1 {
     public static void main(String[] args) throws FileNotFoundException {
 
         // Can only take in one file
-        if (args.length != 1) {
-            System.err.println("Usage: java ~.java <input.txt>");
+        if (args.length != 2) {
+            System.err.println("Usage: java ~.java <pda.txt> <input_string>");
             return;
         }
 
