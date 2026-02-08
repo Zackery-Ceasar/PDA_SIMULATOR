@@ -206,7 +206,7 @@ public class Configurations {
                     && con.getInputCurrent() <= input_string.length()) {
                 for (Transition tran : trans_handler.getTransCollection().get(con.getStateCurrent())) {
                     int curr = con.getInputCurrent();
-                    System.out.println(curr);
+                    // System.out.println(curr);
                     // Some of the configs will have the current input, it shouldn't be incremented
                     // everytime.
                     if ((curr < input_string.length()) && (input_string.charAt(curr) == tran.getRead())
