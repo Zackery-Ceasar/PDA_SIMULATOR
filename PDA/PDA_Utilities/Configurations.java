@@ -14,31 +14,66 @@ Should have:
 
 class Config {
     int state_current;
-    char input_current;
+    int input_current;
     Stack<Character> stack;
 
-    Config(int state_current, char input_current) {
+    Config(int state_current, int input_current) {
         this.state_current = state_current;
         this.input_current = input_current;
         this.stack = new Stack<>();
     }
 
-    Config(int state_current, char input_current, Stack<Character> stack) {
+    Config(int state_current, int input_current, Stack<Character> stack) {
         this.state_current = state_current;
         this.input_current = input_current;
         this.stack = stack;
+    }
+
+    Stack<Character> setNewStack(Transition tran) {
+        // This needs access to what will be popped and rhat will be pushed, all inside
+        // trans.
+        Stack<Character> new_stack = this.stack;
+        if (tran.getPop() != 'E') {
+            new_stack.pop();
+        }
+        if (tran.getPush() != 'E') {
+            new_stack.push(tran.getPush());
+        }
+
+        return new_stack;
+
     }
 
     int getStateCurrent() {
         return this.state_current;
     }
 
-    char getInputCurrent() {
+    int getInputCurrent() {
         return this.input_current;
+    }
+
+    int getAndAddInputCurrent() {
+        return this.input_current++;
     }
 
     char getTopStack() {
         return stack.peek();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Config)) {
+            return false;
+        }
+        Config c = (Config) o;
+        return this.state_current == c.state_current &&
+                this.input_current == c.input_current &&
+                this.stack == c.stack;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.state_current;
     }
 
 }
@@ -88,19 +123,32 @@ public class Configurations {
     public void generateConfigurations() {
         // At first there will only be one config
         for (Config con : configs) {
+            // Iterates through each transition available at current state
             for (Transition tran : trans_handler.getTransCollection().get(con.getStateCurrent())) {
-                if ((con.getInputCurrent() == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
+                int curr = con.getInputCurrent();
+                if ((input_string.charAt(curr) == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
                     // Create new config and add it to set
+                    // getAndAdd increments input and then passes the value to the new config
+                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
+                    c.setNewStack(tran);
+                    configs.add(c);
+                    // Each config has to keep track of what char it currently holds
 
                 }
                 if (('E' == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
-
+                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
+                    c.setNewStack(tran);
+                    configs.add(c);
                 }
-                if ((con.getInputCurrent() == tran.getRead()) && ('E' == tran.getPop())) {
-
+                if ((input_string.charAt(curr) == tran.getRead()) && ('E' == tran.getPop())) {
+                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
+                    c.setNewStack(tran);
+                    configs.add(c);
                 }
                 if (('E' == tran.getRead()) && ('E' == tran.getPop())) {
-
+                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
+                    c.setNewStack(tran);
+                    configs.add(c);
                 }
             }
 

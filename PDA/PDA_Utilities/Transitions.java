@@ -84,7 +84,7 @@ public class Transitions {
                                 } else {
                                         same_state_trans = new HashSet<>();
                                         same_state_trans.add(t);
-                                        trans_collection.putIfAbsent(Integer.parseInt(parts[1]), same_state_trans);
+                                        trans_collection.put(Integer.parseInt(parts[1]), same_state_trans);
                                 }
 
                                 System.out.println(t.getStateCurrent());

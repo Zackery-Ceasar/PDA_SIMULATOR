@@ -30,7 +30,7 @@ public class PDA_Sim {
 
     // This generates all of the possible configurations
     public void simulate() {
-
+        config_handler.generateConfigurations();
     }
 
     // This finds if accept/reject and outputs results.
