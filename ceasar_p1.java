@@ -8,7 +8,7 @@ public class ceasar_p1 {
 
         // Can only take in one file
         if (args.length != 2) {
-            System.err.println("Usage: java ~.java <pda.txt> <input_string>");
+            System.err.println("Usage: java <ceasar_p1> <pda.txt> <input_string>");
             return;
         }
 
