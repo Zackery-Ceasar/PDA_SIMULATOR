@@ -35,7 +35,12 @@ public class PDA_Sim {
 
     // This finds if accept/reject and outputs results.
     public void output_results() {
+        config_handler.generateResults();
+    }
 
+    public void debug() {
+        // trans_handler.debugTransitions();
+        config_handler.debugConfigurations();
     }
 
 }

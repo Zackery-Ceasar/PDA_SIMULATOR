@@ -51,6 +51,10 @@ public class States {
         state_collection = new HashMap<>();
     }
 
+    public boolean isAccept(int state_id) {
+        return state_collection.get(state_id).isAccept();
+    }
+
     public void process_file() {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -62,17 +66,17 @@ public class States {
                 if (parts.length == 2) {
                     s = new State(false, false, Integer.parseInt(parts[1]));
                 } else if (parts.length == 3) {
-                    if (parts[2] == "accept") {
+                    if (parts[2].equals("accept")) {
                         s = new State(false, true, Integer.parseInt(parts[1]));
                     } else {
                         s = new State(true, false, Integer.parseInt(parts[1]));
                         start = s;
                     }
                 } else {
-                    s = new State(true, false, Integer.parseInt(parts[1]));
+                    s = new State(true, true, Integer.parseInt(parts[1]));
                 }
                 state_collection.putIfAbsent(Integer.parseInt(parts[1]), s);
-                System.out.println(s.getId());
+                // System.out.println(s.getId());
             }
 
         }

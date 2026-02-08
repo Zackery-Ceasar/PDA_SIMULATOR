@@ -52,6 +52,29 @@ class Transition {
                 return this.push;
         }
 
+        @Override
+        public String toString() {
+                return "transition " + state_current + " " + read + " " + pop + " " + state_next + " " + push;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+                if (!(o instanceof Transition)) {
+                        return false;
+                }
+                Transition t = (Transition) o;
+                return this.state_current == t.state_current &&
+                                this.pop == t.pop &&
+                                this.read == t.read &&
+                                this.state_next == t.state_next &&
+                                this.push == t.push;
+        }
+
+        @Override
+        public int hashCode() {
+                return this.state_current;
+        }
+
 }
 
 public class Transitions {
@@ -66,6 +89,15 @@ public class Transitions {
 
         public HashMap<Integer, Set<Transition>> getTransCollection() {
                 return this.trans_collection;
+        }
+
+        public void debugTransitions() {
+                // Debugging
+                for (Set<Transition> set_tr : trans_collection.values()) {
+                        for (Transition tr : set_tr) {
+                                System.out.println(tr);
+                        }
+                }
         }
 
         public void process_file() {
@@ -87,7 +119,7 @@ public class Transitions {
                                         trans_collection.put(Integer.parseInt(parts[1]), same_state_trans);
                                 }
 
-                                System.out.println(t.getStateCurrent());
+                                // System.out.println(t.getStateCurrent());
                         }
 
                 }

@@ -2,6 +2,8 @@ package PDA.PDA_Utilities;
 
 import java.util.Stack;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 /*
@@ -29,10 +31,12 @@ class Config {
         this.stack = stack;
     }
 
-    Stack<Character> setNewStack(Transition tran) {
-        // This needs access to what will be popped and rhat will be pushed, all inside
+    Stack<Character> getNewStack(Transition tran) {
+        // This needs access to what will be popped and that will be pushed, all inside
         // trans.
-        Stack<Character> new_stack = this.stack;
+        Stack<Character> new_stack = new Stack<>();
+        new_stack.addAll(this.stack);
+
         if (tran.getPop() != 'E') {
             new_stack.pop();
         }
@@ -53,11 +57,14 @@ class Config {
     }
 
     int getAndAddInputCurrent() {
-        return this.input_current++;
+        return this.input_current + 1;
     }
 
     char getTopStack() {
-        return stack.peek();
+        if (!stack.isEmpty()) {
+            return stack.peek();
+        }
+        return 'X';
     }
 
     @Override
@@ -76,6 +83,12 @@ class Config {
         return this.state_current;
     }
 
+    @Override
+    public String toString() {
+        return "configuration: current state - " + state_current + " current input " + input_current + " current stack "
+                + stack.toString();
+    }
+
 }
 
 public class Configurations {
@@ -83,19 +96,80 @@ public class Configurations {
     Transitions trans_handler;
     States state_handler;
     Set<Config> configs;
+    Set<Config> terminal_configs;
     String input_string;
+    Queue<Config> conq;
 
     public Configurations(Transitions trans_handler, States state_handler) {
         this.trans_handler = trans_handler;
         this.state_handler = state_handler;
         configs = new HashSet<>();
-
+        terminal_configs = new HashSet<>();
+        conq = new LinkedList<>();
     }
 
     // Initalization should just find start state and create configuration for it,
     // and then log it in a hashset
     public void process_file(String input_string) {
-        configs.add(new Config(state_handler.start.getId(), input_string.charAt(0)));
+        Config c = new Config(state_handler.start.getId(), 0);
+        configs.add(c);
+        conq.add(c);
+        this.input_string = input_string;
+    }
+
+    // debugging
+
+    public void debugConfigurations() {
+        for (Config con : configs) {
+            System.out.println(con);
+        }
+    }
+
+    /*
+     * 
+     * When input_current == length of input_string we check if there are any
+     * configs with accept states or reject states. I can make a list of both and
+     * then just print whichever one is true. If there are any terminal configs that
+     * are not accept states print out reject and then those states. If there are
+     * any terminal configs which are accept states print out accept and then those
+     * accept states.
+     * 
+     */
+
+    public void generateResults() {
+        if (terminal_configs.isEmpty()) {
+            System.out.println("reject");
+            return;
+        }
+
+        Set<Config> accept_states = new HashSet<>();
+        Set<Config> reject_states = new HashSet<>();
+
+        for (Config con : terminal_configs) {
+            if (state_handler.isAccept(con.getStateCurrent())) {
+                accept_states.add(con);
+            } else {
+                reject_states.add(con);
+            }
+        }
+
+        String output = "";
+        if (accept_states.isEmpty()) {
+            // Print reject states
+            System.out.print("reject ");
+            for (Config con : reject_states) {
+                output = con.getStateCurrent() + " ";
+            }
+            System.out.println(output);
+        } else {
+            // Print accept states
+            System.out.print("accept ");
+            for (Config con : accept_states) {
+                output = con.getStateCurrent() + " ";
+            }
+            System.out.println(output);
+        }
+
     }
 
     /*
@@ -122,33 +196,57 @@ public class Configurations {
 
     public void generateConfigurations() {
         // At first there will only be one config
-        for (Config con : configs) {
+        // This needs to be a queue, and should iterate while the queue isn't empty
+        while (!conq.isEmpty()) {
+            Config con = conq.remove();
             // Iterates through each transition available at current state
-            for (Transition tran : trans_handler.getTransCollection().get(con.getStateCurrent())) {
-                int curr = con.getInputCurrent();
-                if ((input_string.charAt(curr) == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
-                    // Create new config and add it to set
-                    // getAndAdd increments input and then passes the value to the new config
-                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
-                    c.setNewStack(tran);
-                    configs.add(c);
-                    // Each config has to keep track of what char it currently holds
+            // More debugging
+            // System.out.println(con.getStateCurrent());
+            if (trans_handler.getTransCollection().containsKey(con.getStateCurrent())
+                    && con.getInputCurrent() <= input_string.length()) {
+                for (Transition tran : trans_handler.getTransCollection().get(con.getStateCurrent())) {
+                    int curr = con.getInputCurrent();
+                    System.out.println(curr);
+                    // Some of the configs will have the current input, it shouldn't be incremented
+                    // everytime.
+                    if ((curr < input_string.length()) && (input_string.charAt(curr) == tran.getRead())
+                            && (con.getTopStack() == tran.getPop())) {
+                        // Create new config and add it to set
+                        // getAndAdd increments input and then passes the value to the new config
+                        Config c = new Config(tran.getStateNext(), con.getAndAddInputCurrent(), con.getNewStack(tran));
+                        configs.add(c);
+                        conq.add(c);
+                        if (c.getInputCurrent() == input_string.length()) {
+                            terminal_configs.add(c);
+                        }
+                        // Each config has to keep track of what char it currently holds
 
-                }
-                if (('E' == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
-                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
-                    c.setNewStack(tran);
-                    configs.add(c);
-                }
-                if ((input_string.charAt(curr) == tran.getRead()) && ('E' == tran.getPop())) {
-                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
-                    c.setNewStack(tran);
-                    configs.add(c);
-                }
-                if (('E' == tran.getRead()) && ('E' == tran.getPop())) {
-                    Config c = new Config(tran.getStateNext(), input_string.charAt(con.getAndAddInputCurrent()));
-                    c.setNewStack(tran);
-                    configs.add(c);
+                    }
+                    if (('E' == tran.getRead()) && (con.getTopStack() == tran.getPop())) {
+                        Config c = new Config(tran.getStateNext(), con.getInputCurrent(), con.getNewStack(tran));
+                        configs.add(c);
+                        conq.add(c);
+                        if (c.getInputCurrent() == input_string.length()) {
+                            terminal_configs.add(c);
+                        }
+                    }
+                    if ((curr < input_string.length()) && (input_string.charAt(curr) == tran.getRead())
+                            && ('E' == tran.getPop())) {
+                        Config c = new Config(tran.getStateNext(), con.getAndAddInputCurrent(), con.getNewStack(tran));
+                        configs.add(c);
+                        conq.add(c);
+                        if (c.getInputCurrent() == input_string.length()) {
+                            terminal_configs.add(c);
+                        }
+                    }
+                    if (('E' == tran.getRead()) && ('E' == tran.getPop())) {
+                        Config c = new Config(tran.getStateNext(), con.getInputCurrent(), con.getNewStack(tran));
+                        configs.add(c);
+                        conq.add(c);
+                        if (c.getInputCurrent() == input_string.length()) {
+                            terminal_configs.add(c);
+                        }
+                    }
                 }
             }
 
