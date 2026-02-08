@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
 /* Transition lines come in as:
         transition p x y q z
@@ -18,11 +20,11 @@ import java.util.Scanner;
 class Transition {
         int state_current;
         int state_next;
-        String read;
-        String pop;
-        String push;
+        char read;
+        char pop;
+        char push;
 
-        public Transition(int state_current, int state_next, String read, String pop, String push) {
+        Transition(int state_current, int state_next, char read, char pop, char push) {
                 this.state_current = state_current;
                 this.state_next = state_next;
                 this.read = read;
@@ -38,15 +40,15 @@ class Transition {
                 return this.state_next;
         }
 
-        String getRead() {
+        char getRead() {
                 return this.read;
         }
 
-        String getPop() {
+        char getPop() {
                 return this.pop;
         }
 
-        String getPush() {
+        char getPush() {
                 return this.push;
         }
 
@@ -54,11 +56,16 @@ class Transition {
 
 public class Transitions {
         Scanner scanner;
-        HashMap<Integer, Transition> trans_collection;
+        Set<Transition> same_state_trans;
+        HashMap<Integer, Set<Transition>> trans_collection;
 
         public Transitions(File input) throws FileNotFoundException {
                 scanner = new Scanner(input);
                 trans_collection = new HashMap<>();
+        }
+
+        public HashMap<Integer, Set<Transition>> getTransCollection() {
+                return this.trans_collection;
         }
 
         public void process_file() {
@@ -69,9 +76,17 @@ public class Transitions {
                         // System.out.println(parts[0]);
                         if (parts[0].equals("transition")) {
                                 Transition t;
-                                t = new Transition(Integer.parseInt(parts[1]), Integer.parseInt(parts[4]), parts[2],
-                                                parts[3], parts[5]);
-                                trans_collection.putIfAbsent(Integer.parseInt(parts[1]), t);
+                                t = new Transition(Integer.parseInt(parts[1]), Integer.parseInt(parts[4]),
+                                                parts[2].charAt(0),
+                                                parts[3].charAt(0), parts[5].charAt(0));
+                                if (trans_collection.containsKey(Integer.parseInt(parts[1]))) {
+                                        trans_collection.get(Integer.parseInt(parts[1])).add(t);
+                                } else {
+                                        same_state_trans = new HashSet<>();
+                                        same_state_trans.add(t);
+                                        trans_collection.putIfAbsent(Integer.parseInt(parts[1]), same_state_trans);
+                                }
+
                                 System.out.println(t.getStateCurrent());
                         }
 

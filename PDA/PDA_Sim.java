@@ -17,14 +17,15 @@ public class PDA_Sim {
         this.input = input;
         state_handler = new States(input);
         trans_handler = new Transitions(input);
-        config_handler = new Configurations();
+        config_handler = new Configurations(trans_handler, state_handler);
 
     }
 
     // This takes input file and gives it to States and Transitions to store info
-    public void load() {
+    public void load(String input_string) {
         state_handler.process_file();
         trans_handler.process_file();
+        config_handler.process_file(input_string);
     }
 
     // This generates all of the possible configurations

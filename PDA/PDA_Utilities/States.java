@@ -44,6 +44,7 @@ class State {
 public class States {
     Scanner scanner;
     HashMap<Integer, State> state_collection;
+    State start;
 
     public States(File input) throws FileNotFoundException {
         scanner = new Scanner(input);
@@ -65,6 +66,7 @@ public class States {
                         s = new State(false, true, Integer.parseInt(parts[1]));
                     } else {
                         s = new State(true, false, Integer.parseInt(parts[1]));
+                        start = s;
                     }
                 } else {
                     s = new State(true, false, Integer.parseInt(parts[1]));

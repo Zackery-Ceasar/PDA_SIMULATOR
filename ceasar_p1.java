@@ -29,7 +29,7 @@ public class ceasar_p1 {
 
         PDA_Sim pda_sim_handler = new PDA_Sim(input_file);
 
-        pda_sim_handler.load();
+        pda_sim_handler.load(args[1]);
 
     }
 
