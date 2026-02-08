@@ -120,9 +120,15 @@ public class Configurations {
     // debugging
 
     public void debugConfigurations() {
+        System.out.println("\nAll configs: \n");
         for (Config con : configs) {
             System.out.println(con);
         }
+        System.out.println("\nAll terminal configs: \n");
+        for (Config con : terminal_configs) {
+            System.out.println(con);
+        }
+
     }
 
     /*
@@ -158,14 +164,18 @@ public class Configurations {
             // Print reject states
             System.out.print("reject ");
             for (Config con : reject_states) {
-                output = con.getStateCurrent() + " ";
+                if (!output.contains(String.valueOf(con.getStateCurrent()))) {
+                    output = output + con.getStateCurrent() + " ";
+                }
             }
             System.out.println(output);
         } else {
             // Print accept states
             System.out.print("accept ");
             for (Config con : accept_states) {
-                output = con.getStateCurrent() + " ";
+                if (!output.contains(String.valueOf(con.getStateCurrent()))) {
+                    output = output + con.getStateCurrent() + " ";
+                }
             }
             System.out.println(output);
         }

@@ -29,9 +29,7 @@ public class ceasar_p1 {
 
         PDA_Sim pda_sim_handler = new PDA_Sim(input_file);
 
-        pda_sim_handler.load(args[1]);
-        pda_sim_handler.simulate();
-        pda_sim_handler.output_results();
+        pda_sim_handler.runPDA(args[1]);
         // pda_sim_handler.debug();
 
     }

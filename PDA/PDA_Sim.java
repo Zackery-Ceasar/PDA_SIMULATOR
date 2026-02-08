@@ -21,6 +21,12 @@ public class PDA_Sim {
 
     }
 
+    public void runPDA(String input_string) {
+        load(input_string);
+        simulate();
+        outputResults();
+    }
+
     // This takes input file and gives it to States and Transitions to store info
     public void load(String input_string) {
         state_handler.process_file();
@@ -29,16 +35,16 @@ public class PDA_Sim {
     }
 
     // This generates all of the possible configurations
-    public void simulate() {
+    void simulate() {
         config_handler.generateConfigurations();
     }
 
     // This finds if accept/reject and outputs results.
-    public void output_results() {
+    void outputResults() {
         config_handler.generateResults();
     }
 
-    public void debug() {
+    void debug() {
         // trans_handler.debugTransitions();
         config_handler.debugConfigurations();
     }
